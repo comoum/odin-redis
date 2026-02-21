@@ -9,7 +9,7 @@ redis odin 客户端
 - 希望对外暴露的与struct有关的使用 `类名(CamelCase)_snake_case`  
 - 不希望对外暴露(非private)的与struct有关的使用 `类名(lower)_snake_case`  
 - 不与struct有关的使用 `snake_case` 
-- struct内method使用 `snake_case` 
+- struct内method、field使用 `snake_case` 
 - 本地变量使用 `camelCase`  
 
 # 使用
@@ -22,7 +22,6 @@ import "core:log"
 redisCli: ^redis.Cmdable
 logger: log.Logger
 
-@(init, private)
 init :: proc() {
 	win.SetConsoleOutputCP(.UTF8)
 
@@ -35,7 +34,6 @@ init :: proc() {
 	}
 }
 
-@(fini, private)
 fini :: proc() {
 	log.destroy_console_logger(logger)
 	redis.Cmdable_free(redisCli)
@@ -56,6 +54,8 @@ main :: proc() {
 		}
 		mem.tracking_allocator_destroy(&track)
 	}
+	init()
+	defer fini()
 	// 使用logger
 	context.logger = logger
     // 已定义的命令都可直接使用
